@@ -151,7 +151,7 @@ class SARA:
                         with Image.open(path) as target:
                             width, height = target.size
                             size = str(width)+"x"+str(height)
-                            logo = os.path.basename(self.AppIcon)
+                            logo = "sara-"+os.path.basename(self.AppIcon)
                             os.system("cp -R "+self.AppIcon+" "+logo)
                             os.system("mogrify -resize "+size+" "+logo+";cp -R "+logo+" "+path)
                             os.system("rm -rf "+logo)
@@ -196,7 +196,7 @@ class SARA:
                         with Image.open(path) as target:
                             width, height = target.size
                             size = str(width)+"x"+str(height)
-                            logo = os.path.basename(self.AppIcon)
+                            logo = "sara-"+os.path.basename(self.AppIcon)
                             os.system("cp -R "+self.AppIcon+" "+logo)
                             os.system("mogrify -resize "+size+" "+logo+";cp -R "+logo+" "+path)
                             os.system("rm -rf "+logo)
