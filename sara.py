@@ -228,7 +228,6 @@ any loss or damage is the responsibility of the user.
         
 if __name__ == "__main__":
     try:
-        check_requirements()
         Sara=SARA()
         Sara.menu()
     except KeyboardInterrupt:
