@@ -215,8 +215,8 @@ any loss or damage is the responsibility of the user.
 
 {w}[{r}CHOOSE RANSOMWARE TYPE{w}]
 
-{w}[{b}1{w}] SARA - version 1.0 ({y}TYPE LOCK SCREEN{w})
-{w}[{b}2{w}] SARA - version 2.0 ({y}TYPE FILE ENCRYPTION{w})
+{w}[{b}1{w}] SARA - TYPE LOCK SCREEN {w}({y} ANDROID 10 {w})
+{w}[{b}2{w}] SARA - TYPE FILE ENCRYPTION {w}({y} ANDROID 7.1 {w})
 {w}[{b}3{w}] Exit from console
         """)
         while True:
