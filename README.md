@@ -6,7 +6,7 @@ This tool is made for education purpose only, the author is not responsible for 
 ### Installation
 * Kali Linux, Ubuntu, Debian, Termux (proot-distro: Ubuntu)
 ```bash
-git clone https://github.com/termuxhackers-id/SARA && cd SARA && sudo bash install.sh
+git clone https://github.com/termuxhackers-id/SARA && cd SARA && sudo bash install.sh && python3 sara.py
 ```
 ### Demo
 * Generate Custom Trojan (metasploit)
