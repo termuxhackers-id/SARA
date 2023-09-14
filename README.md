@@ -1,4 +1,4 @@
-<img title="SARA" src="https://img.shields.io/badge/CODENAME%20-SARA-SCRIPT?colorA=grey&colorB=blue&style=for-the-badge"> <img title="SARA" src="https://img.shields.io/badge/VERSION%20-3.0-SCRIPT?colorA=grey&colorB=blue&style=for-the-badge"> <img title="SARA" src="https://img.shields.io/badge/PYTHON%20-3.10>-SCRIPT?colorA=grey&colorB=blue&style=for-the-badge"> 
+<img title="SARA" src="https://img.shields.io/badge/CODENAME%20-SARA-SCRIPT?colorA=grey&colorB=blue&style=for-the-badge"> <img title="SARA" src="https://img.shields.io/badge/VERSION%20-3.0-SCRIPT?colorA=grey&colorB=blue&style=for-the-badge">
 ### About
 SARA is a simple tool to create Trojan or Ransomware for Android devices
 ### Disclaimer
