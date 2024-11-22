@@ -1,4 +1,6 @@
 <img title="SARA" src="https://img.shields.io/badge/CODENAME%20-SARA-SCRIPT?colorA=grey&colorB=blue&style=for-the-badge"> <img title="SARA" src="https://img.shields.io/badge/VERSION%20-3.0-SCRIPT?colorA=grey&colorB=blue&style=for-the-badge">
+## What's New?
+Added requirements.txt When Error Execute Command pip install -r requirements.txt
 ### About
 SARA is a simple tool to create Trojan or Ransomware for Android devices
 ### Disclaimer
