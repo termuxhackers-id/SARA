@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Internal Server Error{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="text-center">
+            <div class="mb-4">
+                <i class="bi bi-exclamation-octagon display-1 text-danger"></i>
+            </div>
+            <h1 class="display-4 fw-bold text-danger">500</h1>
+            <h2 class="mb-4">Internal Server Error</h2>
+            <p class="lead mb-4">
+                Something went wrong on our end. Please try again later.
+            </p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">
+                    <i class="bi bi-house"></i> Go Home
+                </a>
+                <button onclick="location.reload()" class="btn btn-secondary">
+                    <i class="bi bi-arrow-clockwise"></i> Retry
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
