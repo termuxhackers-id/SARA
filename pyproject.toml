@@ -1,0 +1,10 @@
+[project]
+name = "sara"
+version = "3.1.0"
+description = "Simple Android Ransomware Attack"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "Pillow",
+    "requests"
+]
